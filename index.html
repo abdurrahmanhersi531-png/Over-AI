@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Over AI</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0f0f0f;
+      padding: 25px;
+      box-shadow: 0px 3px 5px rgba(0,0,0,0.5);
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: #4fc3f7;
+    }
+    #inputBox {
+      width: 90%;
+      max-width: 700px;
+      margin: 20px auto 10px auto;
+      display: block;
+      padding: 12px;
+      font-size: 17px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 17px;
+      background: #4fc3f7;
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    button:hover {
+      background: #039be5;
+      color: white;
+    }
+    #output {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      text-align: left;
+      background: #1e1e1e;
+      padding: 18px;
+      border-radius: 8px;
+      border-left: 4px solid #4fc3f7;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Over AI</h1>
+  <p>Ask anything — Over AI will try to answer!</p>
+</header>
+
+<textarea id="inputBox" placeholder="Type a question here..."></textarea>
+<button onclick="respond()">Submit</button>
+
+<div id="output">Over AI is ready to answer...</div>
+
+<!-- Fuse.js fuzzy matching -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js"></script>
+
+<script>
+// Expanded list of common questions, math variations, and general AI prompts
+const questions = [
+  "what is your name",
+  "how old are you",
+  "where are you from",
+  "how does ai work",
+  "what does ai mean",
+  "what is the weather like today",
+  "what is the time",
+  "what is the stock market",
+  "what is the meaning of happiness",
+  "explain photosynthesis",
+  "what is the significance of the turing test",
+  "what are the primary causes of climate change",
+  "can you provide a brief history of the internet",
+  "how does the stock market work",
+  "what are some strategies for reducing stress",
+  "describe the life and achievements of marie curie",
+  "tell me a joke",
+  "make me laugh",
+  "what is the largest mammal",
+  "what are the seven wonders of the ancient world",
+  "what are the three branches of the government",
+  "what is the difference between ai and machine learning",
+  // Math questions real users often ask
+  "what is 2 plus 2",
+  "calculate 5 plus 7",
+  "what is 10 minus 3",
+  "solve for y in 4y + 7 = 31",
+  "solve 3x - 9 = 0",
+  "what is 7 times 8",
+  "divide 28 by 4",
+  "what is the square root of 81",
+  "evaluate 3 squared",
+  "find x if x times 6 equals 42",
+  "probability of selecting a red marble from 15 blue 8 red 12 green",
+  "can you help me with a math problem",
+  "solve for x in 2x + 6 = 14",
+  "what is the area of a rectangle 5 by 3",
+  "what is the perimeter of a square with side 4",
+  "what is one half plus one quarter",
+  "what is 0.5 times 0.2",
+  "what is 75% of 80"
+];
+
+// Create Fuse search for fuzzy matching
+const fuse = new Fuse(questions, {
+  includeScore: true,
+  threshold: 0.4
+});
+
+function respond() {
+  let userText = document.getElementById("inputBox").value.toLowerCase().trim();
+  let outputText = "";
+  let results = fuse.search(userText);
+
+  if (results.length > 0 && results[0].score < 0.4) {
+    let match = results[0].item;
+
+    switch(match) {
+
+      // Basic AI/definitions
+      case "what is your name":
+        outputText = "I am Over AI!";
+        break;
+      case "how old are you":
+        outputText = "I do not age like people.";
+        break;
+      case "where are you from":
+        outputText = "I exist in your browser.";
+        break;
+      case "how does ai work":
+        outputText = "AI processes patterns in data to respond intelligently.";
+        break;
+      case "what does ai mean":
+        outputText = "AI stands for Artificial Intelligence.";
+        break;
+      case "what is the meaning of happiness":
+        outputText = "Happiness is often feeling good and content with life.";
+        break;
+
+      // Common knowledge
+      case "explain photosynthesis":
+        outputText = "Photosynthesis is how plants use sunlight to make food.";
+        break;
+      case "what are the primary causes of climate change":
+        outputText = "Climate change is driven mostly by greenhouse gas emissions.";
+        break;
+      case "can you provide a brief history of the internet":
+        outputText = "The internet began as ARPANET and expanded globally as networks connected.";
+        break;
+      case "what is the significance of the turing test":
+        outputText = "The Turing test evaluates whether a machine’s behavior appears human.";
+        break;
+
+      // Funny / general
+      case "tell me a joke":
+      case "make me laugh":
+        outputText = "Why did the math book look sad? It had too many problems!";
+        break;
+      case "what is the largest mammal":
+        outputText = "The blue whale is the largest mammal on Earth. :contentReference[oaicite:2]{index=2}";
+        break;
+      case "what are the seven wonders of the ancient world":
+        outputText = "Examples include the Great Pyramid of Giza and the Hanging Gardens. :contentReference[oaicite:3]{index=3}";
+        break;
+      case "what are the three branches of the government":
+        outputText = "In many systems, it's the executive, legislative, and judicial branches.";
+
+      // Math answers
+      case "what is 2 plus 2":
+        outputText = "2 plus 2 equals 4.";
+        break;
+      case "calculate 5 plus 7":
+        outputText = "5 + 7 = 12.";
+        break;
+      case "what is 10 minus 3":
+        outputText = "10 − 3 = 7.";
+        break;
+      case "solve for y in 4y + 7 = 31":
+        outputText = "4y + 7 = 31 → y = 6.";
+        break;
+      case "solve 3x - 9 = 0":
+        outputText = "3x − 9 = 0 → x = 3.";
+        break;
+      case "what is 7 times 8":
+        outputText = "7 × 8 = 56.";
+        break;
+      case "divide 28 by 4":
+        outputText = "28 ÷ 4 = 7.";
+        break;
+      case "what is the square root of 81":
+        outputText = "√81 = 9.";
+        break;
+      case "evaluate 3 squared":
+        outputText = "3 squared (3²) = 9.";
+        break;
+      case "find x if x times 6 equals 42":
+        outputText = "x × 6 = 42 → x = 7.";
+        break;
+      case "probability of selecting a red marble from 15 blue 8 red 12 green":
+        outputText = "Probability = 8 / (15+8+12) = 8/35.";
+        break;
+      case "solve for x in 2x + 6 = 14":
+        outputText = "2x + 6 = 14 → x = 4.";
+        break;
+      case "what is the area of a rectangle 5 by 3":
+        outputText = "Area = 5 × 3 = 15.";
+        break;
+      case "what is the perimeter of a square with side 4":
+        outputText = "Perimeter = 16.";
+        break;
+      case "what is one half plus one quarter":
+        outputText = "½ + ¼ = ¾.";
+        break;
+      case "what is 0.5 times 0.2":
+        outputText = "0.5 × 0.2 = 0.1.";
+        break;
+      case "what is 75% of 80":
+        outputText = "75% of 80 = 60.";
+        break;
+
+      default:
+        outputText = "I know about that topic but don't have an exact answer coded yet!";
+    }
+
+  } else {
+    outputText = "I don't recognize that question yet — try another!";
+  }
+
+  document.getElementById("output").innerText = outputText;
+}
+</script>
+
+</body>
+</html>
+
