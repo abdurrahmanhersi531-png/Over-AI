@@ -106,27 +106,86 @@ button:hover {
 </div>
 
 <script>
-// SLANG + SPELLING FIX
+<script>
 function normalize(text) {
+  text = text.toLowerCase();
+
+  // PHRASE FIXES (MOST IMPORTANT)
+  const phrases = {
+    "what you sayin": "hello",
+    "what u sayin": "hello",
+    "wassup": "hello",
+    "what's up": "hello",
+    "yo bro": "hello",
+    "yo vro": "hello",
+    "help me out": "help",
+    "can you help": "help",
+    "i need help": "help",
+    "maths help": "math",
+    "english help": "english",
+    "hw": "homework",
+    "home work": "homework"
+  };
+
+  for (let p in phrases) {
+    text = text.replaceAll(p, phrases[p]);
+  }
+
+  // WORD FIXES (SLANG + SPELLING)
   const fixes = {
+    // slang
     "vro": "bro",
     "bruh": "bro",
-    "pls": "please",
-    "plz": "please",
-    "thx": "thanks",
+    "fam": "friend",
+    "innit": "isn't it",
+    "ain": "isn't",
+    "cuz": "because",
+    "bc": "because",
+    "idk": "i do not know",
+    "idc": "i do not care",
+    "imo": "in my opinion",
+    "ngl": "not going to lie",
+    "fr": "for real",
+    "rn": "right now",
+    "lol": "",
+    "lmao": "",
+    "nah": "no",
+    "ye": "yes",
+    "yeah": "yes",
+    "yep": "yes",
+    "nope": "no",
+
+    // texting
     "u": "you",
     "ur": "your",
     "r": "are",
+    "pls": "please",
+    "plz": "please",
+    "thx": "thanks",
+    "ty": "thanks",
+
+    // spelling
     "wat": "what",
     "wut": "what",
+    "englih": "english",
+    "lernign": "learning",
+    "becuase": "because",
+    "tommorow": "tomorrow",
+    "definately": "definitely",
+
+    // school
     "maths": "math",
-    "eng": "english"
+    "eng": "english",
+    "calc": "math",
+    "algebra": "math",
+    "grammar": "english"
   };
 
-  let words = text.toLowerCase().split(" ");
-  words = words.map(w => fixes[w] || w);
+  let words = text.split(/\s+/).map(w => fixes[w] || w);
   return words.join(" ");
 }
+</script>
+
 
 // AI RESPONSE
 function runAI() {
@@ -199,3 +258,4 @@ function genMath() {
 
 </body>
 </html>
+
