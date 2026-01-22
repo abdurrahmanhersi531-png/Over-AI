@@ -8,55 +8,53 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #0f0f14;
+  background: #0d0d12;
   color: #eee;
   margin: 0;
-  padding: 0;
 }
 
 header {
-  background: #15151d;
+  background: #151520;
   padding: 20px;
   text-align: center;
 }
 
 header h1 {
-  margin: 0;
   color: #7aa2ff;
+  margin: 0;
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: auto;
   padding: 20px;
 }
 
 .box {
-  background: #181824;
+  background: #1a1a28;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 20px;
 }
 
 textarea {
   width: 100%;
-  height: 80px;
-  background: #0f0f14;
+  height: 90px;
+  background: #0d0d12;
   color: #fff;
   border: 1px solid #333;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
-  resize: none;
 }
 
 button {
   background: #7aa2ff;
   color: #000;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
+  margin: 5px 5px 0 0;
 }
 
 button:hover {
@@ -65,10 +63,10 @@ button:hover {
 
 .output {
   margin-top: 15px;
-  background: #0f0f14;
+  background: #0d0d12;
   padding: 15px;
   border-radius: 8px;
-  min-height: 60px;
+  min-height: 80px;
 }
 
 .question {
@@ -81,175 +79,156 @@ button:hover {
 
 <header>
   <h1>Practice AI</h1>
-  <p>Smart practice for English & Math</p>
+  <p>Smart English & Math practice</p>
 </header>
 
 <div class="container">
 
-  <!-- AI CHAT -->
   <div class="box">
     <h2>AI Chat</h2>
-    <textarea id="userInput" placeholder="Type something like: hey vro i need maths help"></textarea>
+    <textarea id="userInput" placeholder="yo vro help me wit maths rn"></textarea>
     <br>
     <button onclick="runAI()">Ask AI</button>
     <div class="output" id="aiOutput"></div>
   </div>
 
-  <!-- QUESTIONS -->
   <div class="box">
-    <h2>Generate Questions</h2>
-    <button onclick="genEnglish()">Generate English</button>
-    <button onclick="genMath()">Generate Math</button>
+    <h2>Generate Practice</h2>
+    <button onclick="genEnglish()">English Questions</button>
+    <button onclick="genMath()">Math Questions</button>
     <div class="output" id="questionOutput"></div>
   </div>
 
 </div>
 
 <script>
-<script>
+// ================= SLANG + NORMALISER =================
 function normalize(text) {
   text = text.toLowerCase();
 
-  // PHRASE FIXES (MOST IMPORTANT)
   const phrases = {
-    "what you sayin": "hello",
-    "what u sayin": "hello",
-    "wassup": "hello",
-    "what's up": "hello",
-    "yo bro": "hello",
     "yo vro": "hello",
-    "help me out": "help",
+    "wassup": "hello",
+    "what you saying": "hello",
+    "what u saying": "hello",
     "can you help": "help",
-    "i need help": "help",
+    "help me": "help",
+    "need help": "help",
     "maths help": "math",
-    "english help": "english",
-    "hw": "homework",
-    "home work": "homework"
+    "english help": "english"
   };
 
   for (let p in phrases) {
     text = text.replaceAll(p, phrases[p]);
   }
 
-  // WORD FIXES (SLANG + SPELLING)
   const fixes = {
-    // slang
     "vro": "bro",
     "bruh": "bro",
     "fam": "friend",
     "innit": "isn't it",
-    "ain": "isn't",
-    "cuz": "because",
-    "bc": "because",
     "idk": "i do not know",
     "idc": "i do not care",
-    "imo": "in my opinion",
-    "ngl": "not going to lie",
     "fr": "for real",
     "rn": "right now",
-    "lol": "",
-    "lmao": "",
-    "nah": "no",
-    "ye": "yes",
-    "yeah": "yes",
-    "yep": "yes",
-    "nope": "no",
-
-    // texting
+    "pls": "please",
+    "plz": "please",
     "u": "you",
     "ur": "your",
     "r": "are",
-    "pls": "please",
-    "plz": "please",
-    "thx": "thanks",
-    "ty": "thanks",
-
-    // spelling
-    "wat": "what",
-    "wut": "what",
-    "englih": "english",
-    "lernign": "learning",
-    "becuase": "because",
-    "tommorow": "tomorrow",
-    "definately": "definitely",
-
-    // school
     "maths": "math",
     "eng": "english",
-    "calc": "math",
-    "algebra": "math",
-    "grammar": "english"
+    "wat": "what",
+    "wut": "what"
   };
 
-  let words = text.split(/\s+/).map(w => fixes[w] || w);
-  return words.join(" ");
+  return text.split(/\s+/).map(w => fixes[w] || w).join(" ");
 }
-</script>
 
+// ================= AI CHAT =================
+const unknownReplies = [
+  "I’m not fully sure what you meant, but I can help with math or English 👍",
+  "That didn’t fully click for me. Try asking for practice questions.",
+  "I might’ve misunderstood. Want math or English questions?",
+  "Can you rephrase that? I’m best at school practice stuff.",
+  "I didn’t catch that properly. Try typing it a bit differently."
+];
 
-// AI RESPONSE
 function runAI() {
   let input = document.getElementById("userInput").value;
   let clean = normalize(input);
   let output = "";
 
-  if (clean.includes("hello") || clean.includes("hi")) {
-    output = "Hello bro 👋 How can I help you today?";
+  if (clean.includes("hello")) {
+    output = "Hey bro 👋 What do you want to practice today?";
   } 
   else if (clean.includes("math")) {
-    output = "I can help with math. Click the math generator or ask a question.";
+    output = "Math mode ready 📐 Click the math button for questions.";
   } 
   else if (clean.includes("english")) {
-    output = "English practice coming right up. Try the English generator.";
+    output = "English practice ready 📘 Click the English button.";
   } 
   else if (clean.includes("help")) {
-    output = "I’m here to help. Ask me for math, English, or practice questions.";
+    output = "I can help with math or English practice. Just say which one.";
   } 
   else {
-    output = "I understood this as: <br><br><b>" + clean + "</b><br><br>Try asking for math or English help.";
+    output = unknownReplies[Math.floor(Math.random() * unknownReplies.length)];
   }
 
   document.getElementById("aiOutput").innerHTML = output;
 }
 
-// ENGLISH QUESTIONS
+// ================= ENGLISH QUESTIONS =================
 function genEnglish() {
-  let q = [
-    "Fix the spelling: I realy like lernign englih",
-    "Rewrite correctly: he dont like reading books",
-    "Choose the noun: run, happiness, quickly",
-    "Fix the sentence: they was going to school",
-    "Correct this: i can has a apple",
-    "Find the verb: She quickly ran home",
-    "Fix punctuation: where are you going",
-    "Correct spelling: becuase tommorow",
-    "Choose adjective: blue, run, eat",
-    "Rewrite: me and him went park"
+  const starts = [
+    "Fix the spelling:",
+    "Rewrite correctly:",
+    "Choose the correct word:",
+    "Correct the sentence:",
+    "Find the error in:"
+  ];
+
+  const sentences = [
+    "i realy like lerning english",
+    "he dont want go school",
+    "me and him was late",
+    "they is playing outside",
+    "she runned to home",
+    "where is you going",
+    "i can has more time",
+    "we was happy yesterday",
+    "there going to park",
+    "its raining outside today"
   ];
 
   let out = "";
-  for (let i = 0; i < 30; i++) {
-    out += "<div class='question'>" + (i+1) + ". " + q[Math.floor(Math.random()*q.length)] + "</div>";
+  for (let i = 0; i < 60; i++) {
+    let q = starts[Math.floor(Math.random()*starts.length)] +
+            " " +
+            sentences[Math.floor(Math.random()*sentences.length)];
+    out += `<div class="question">${i+1}. ${q}</div>`;
   }
 
   document.getElementById("questionOutput").innerHTML = out;
 }
 
-// MATH QUESTIONS
+// ================= MATH QUESTIONS =================
 function genMath() {
   let out = "";
-  for (let i = 0; i < 40; i++) {
-    let a = Math.floor(Math.random()*20)+1;
-    let b = Math.floor(Math.random()*20)+1;
-    let type = i % 4;
 
+  for (let i = 0; i < 70; i++) {
+    let a = Math.floor(Math.random()*50)+1;
+    let b = Math.floor(Math.random()*50)+1;
+    let type = Math.floor(Math.random()*5);
     let q = "";
-    if (type === 0) q = `${a} + ${b} = ?`;
-    if (type === 1) q = `${a} × ${b} = ?`;
-    if (type === 2) q = `${a*2} ÷ 2 = ?`;
-    if (type === 3) q = `What is ${b} less than ${a+b}?`;
 
-    out += "<div class='question'>" + (i+1) + ". " + q + "</div>";
+    if (type === 0) q = `${a} + ${b} = ?`;
+    if (type === 1) q = `${a} − ${b} = ?`;
+    if (type === 2) q = `${a} × ${b} = ?`;
+    if (type === 3) q = `${a*b} ÷ ${a} = ?`;
+    if (type === 4) q = `What is ${b} more than ${a}?`;
+
+    out += `<div class="question">${i+1}. ${q}</div>`;
   }
 
   document.getElementById("questionOutput").innerHTML = out;
@@ -258,4 +237,3 @@ function genMath() {
 
 </body>
 </html>
-
